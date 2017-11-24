@@ -33,8 +33,6 @@ int nEl_IGA_x = 5;
 
 bool asciiOrBinaryVtu = true;
 bool display_mesh = false;
-// bool rotateMeshAccordingToPoinconBenchmark = true;
-//int decomposition = 3;
 
 
 using namespace std;
@@ -44,52 +42,19 @@ int main(int argc, char *argv[])
 
    // - geometry setting ()
     double length[] = {4.0, 2.0, 2.0};
-    // - decomposition
-//    int nElSub[] = {nEx,nEy,nEz};
-//    int nSub[]   = {nSx,nSy,nSz};
 
     int cnt;
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                      DEFINITION OF FEM BODY
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//
-
-//    double shiftUp[3];
-//    int nElxyz_allUp[3];
-//    for (int i = 0; i < 3; i++){
-//        nElxyz_allUp[i] = nElSub[i] * nSub[i];
-//        shiftUp[i] = 0.5 * length[i];
-//    }
-
-    int nEl_FEM = 0;// nElxyz_allUp[0] * nElxyz_allUp[1] * nElxyz_allUp[2];
-    int nEl_IGA = 1;
-    int nEl = nEl_IGA + nEl_FEM;
-
-
-//    double dxyzUp[3];
-//    for (int i = 0 ; i < 3; i++){
-//        dxyzUp[i] = length[i] / nElxyz_allUp[i];
-//    }
-
-    int nP_FEM = 0;// (nElxyz_allUp[0] + 1) * (nElxyz_allUp[1] + 1) * (nElxyz_allUp[2] + 1);
-
-
-
+    int nEl = 1;
 
     std::string filename = "iga.vtu";//argv[1];
 
-
     vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid =
         vtkSmartPointer<vtkUnstructuredGrid>::New();
-
 
 // -----------------------------------------------------------------------------------------
     vtkSmartPointer<vtkDoubleArray> _vtkDataArray0 = vtkSmartPointer<vtkDoubleArray>::New();
     _vtkDataArray0->SetName("Knots_0");
     _vtkDataArray0->SetNumberOfComponents(1);
-
-
 
 
         int nKnot_x = nEl_IGA_x + 1;
@@ -174,18 +139,17 @@ int main(int argc, char *argv[])
 
 
 // number of IGA nodes
-//    int nP_IGA = t2[3] * t2[4] * t2[5];
     vtkSmartPointer<vtkIntArray> _vtkDataArray3 = vtkSmartPointer<vtkIntArray>::New();
     _vtkDataArray3->SetName("RegionId");
     _vtkDataArray3->SetNumberOfComponents(1);
     vector < int > t3();
-    _vtkDataArray3->SetNumberOfTuples(nP_IGA + nP_FEM);
+    _vtkDataArray3->SetNumberOfTuples(nP_IGA);
 
     for (int i = 0; i < nP_IGA; i++){
         tuple[0] = 0;
         _vtkDataArray3->SetTuple(i, tuple);
     }
-    for (int i = nP_IGA; i < nP_IGA + nP_FEM; i++){
+    for (int i = nP_IGA; i < nP_IGA; i++){
         tuple[0] = 1;
         _vtkDataArray3->SetTuple(i, tuple);
     }
@@ -229,20 +193,6 @@ int main(int argc, char *argv[])
         nPoints++;
     }
 
-//    for (int kk = 0; kk <  nElxyz_allUp[2] + 1; kk++){
-//        for (int jj = 0; jj <  nElxyz_allUp[1] + 1; jj++){
-//            for (int ii = 0; ii <  nElxyz_allUp[0] + 1; ii++){
-//                _x = ii * dxyzUp[0] - shiftUp[0] * 0;
-//                _y = jj * dxyzUp[1] - shiftUp[1];
-//                _z = kk * dxyzUp[2] - shiftUp[2];
-//                points->InsertNextPoint(_x, _y, _z);
-//                nPoints++;
-//            }
-//        }
-//    }
-// Hexahedron
-
-
 
 
     vtkSmartPointer<vtkIdList> plvx_ids = vtkSmartPointer<vtkIdList>::New();
@@ -259,76 +209,16 @@ int main(int argc, char *argv[])
     }
     unstructuredGrid->Allocate(nEl,1);
     unstructuredGrid->InsertNextCell (VTK_POLY_VERTEX, plvx_ids);
-
-
-//    int ttt[8], _first_set[4];
-//    std::vector < int > tmp_vec (ttt, ttt + sizeof(ttt)/sizeof(int));
-//    int nxyUp = (nElxyz_allUp[0] + 1) * (nElxyz_allUp[1] + 1);
-//
-//    for (int kk = 0; kk <  nElxyz_allUp[2]; kk++){
-//        for (int jj = 0; jj <  nElxyz_allUp[1]; jj++){
-//            for (int ii = 0; ii <  nElxyz_allUp[0]; ii++)
-//            {
-//                _first_set[0] = ii + 0 + (jj + 0) * (nElxyz_allUp[0] + 1);
-//                _first_set[1] = ii + 1 + (jj + 0) * (nElxyz_allUp[0] + 1);
-//                _first_set[2] = ii + 1 + (jj + 1) * (nElxyz_allUp[0] + 1);
-//                _first_set[3] = ii + 0 + (jj + 1) * (nElxyz_allUp[0] + 1);
-//                for (int ll = 0; ll < 4; ll++){
-//                    tmp_vec[ll]     =  nP_IGA + _first_set[ll] + kk * nxyUp;
-//                    tmp_vec[ll+4]   =  nP_IGA + _first_set[ll] + (kk + 1) * nxyUp;
-//                }
-//                for (int ll = 0; ll < 8; ll ++){
-//                    hexa_ids->InsertId(ll,tmp_vec[ll]);
-//                }
-//                unstructuredGrid->InsertNextCell (VTK_HEXAHEDRON, hexa_ids);
-//            }
-//        }
-//    }
-
-//---------------------------
-
     unstructuredGrid->SetPoints(points);
 
 
 
 
 // PartitionId --------------------------------------------------------------------------------
-
-
     vtkSmartPointer<vtkIntArray> _vtkDataArray_PartId = vtkSmartPointer<vtkIntArray>::New();
     _vtkDataArray_PartId->SetName("PartitionId");
     _vtkDataArray_PartId->SetNumberOfComponents(1);
     _vtkDataArray_PartId->SetNumberOfTuples(nEl);
-
-
-//    // FEM
-//    cnt = 0;
-//    int currentIdOfMat = 0;
-//    tuple[0] = currentIdOfMat;
-//    _vtkDataArray_PartId->SetTuple(cnt, tuple);
-//    cnt++;
-//    currentIdOfMat++;
-//    for (int KK = 0; KK <  nSub[2]; KK++){
-//        for (int JJ = 0; JJ <  nSub[1]; JJ++){
-//            for (int II = 0; II <  nSub[0]; II++){
-//                for (int kk = KK * nElSub[2] ; kk <  (KK + 1) * nElSub[2]; kk++){
-//                    for (int jj = JJ * nElSub[1]; jj <  (JJ + 1) * nElSub[1]; jj++){
-//                        for (int ii = II * nElSub[0]; ii <  (II + 1) * nElSub[0]; ii++){
-//                            tuple[0] = currentIdOfMat;
-//                            cnt = 1 + ii + jj * nElxyz_allUp[0] + kk * (nElxyz_allUp[0] * nElxyz_allUp[1]);
-//                            _vtkDataArray_PartId->SetTuple(cnt, tuple);
-//                        }
-//                    }
-//                }
-//                currentIdOfMat++;
-//            }
-//        }
-//    }
-
-
-
-
-
 // MaterialId --------------------------------------------------------------------------------
     vtkSmartPointer<vtkIntArray> _vtkDataArray_MatId = vtkSmartPointer<vtkIntArray>::New();
     _vtkDataArray_MatId->SetName("MaterialId");
@@ -336,10 +226,6 @@ int main(int argc, char *argv[])
     _vtkDataArray_MatId->SetNumberOfTuples(nEl);
     tuple[0] = 1;
     _vtkDataArray_MatId->SetTuple(0, tuple);
-//    tuple[0] = 2;
-//    for (int i = nEl_IGA; i <  nEl_IGA + nEl_FEM; i++){
-//        _vtkDataArray_MatId->SetTuple(i, tuple);
-//    }
     unstructuredGrid->GetCellData()->AddArray(_vtkDataArray_MatId);
 // FormulationId --------------------------------------------------------------------------------
     vtkSmartPointer<vtkIntArray> _vtkDataArray_FormId = vtkSmartPointer<vtkIntArray>::New();
@@ -348,10 +234,6 @@ int main(int argc, char *argv[])
     _vtkDataArray_FormId->SetNumberOfTuples(nEl);
     tuple[0] = 900;
     _vtkDataArray_FormId->SetTuple(0, tuple);
-//    tuple[0] = 30;
-//    for (int i = nEl_IGA; i <  nEl_IGA + nEl_FEM; i++){
-//        _vtkDataArray_FormId->SetTuple(i, tuple);
-//    }
     unstructuredGrid->GetCellData()->AddArray(_vtkDataArray_FormId);
 // PieceId --------------------------------------------------------------------------------
     vtkSmartPointer<vtkIntArray> _vtkDataArray_PieceId = vtkSmartPointer<vtkIntArray>::New();
@@ -360,10 +242,6 @@ int main(int argc, char *argv[])
     _vtkDataArray_PieceId->SetNumberOfTuples(nEl);
     tuple[0] = 1;
     _vtkDataArray_PieceId->SetTuple(0, tuple);
-//    tuple[0] = 2;
-//    for (int i = nEl_IGA; i <  nEl_IGA + nEl_FEM; i++){
-//        _vtkDataArray_PieceId->SetTuple(i, tuple);
-//    }
     unstructuredGrid->GetCellData()->AddArray(_vtkDataArray_PieceId);
 // RegionId --------------------------------------------------------------------------------
     vtkSmartPointer<vtkIntArray> _vtkDataArray_RegionId = vtkSmartPointer<vtkIntArray>::New();
@@ -372,10 +250,6 @@ int main(int argc, char *argv[])
     _vtkDataArray_RegionId->SetNumberOfTuples(nEl);
     tuple[0] = 0;
     _vtkDataArray_RegionId->SetTuple(0, tuple);
-//    tuple[0] = 1;
-//    for (int i = nEl_IGA; i <  nEl_IGA + nEl_FEM; i++){
-//        _vtkDataArray_RegionId->SetTuple(i, tuple);
-//    }
     unstructuredGrid->GetCellData()->AddArray(_vtkDataArray_RegionId);
 
     unstructuredGrid->GetCellData()->AddArray(_vtkDataArray_PartId);
